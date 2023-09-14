@@ -12,10 +12,14 @@ func Nosurf(next http.Handler) http.Handler {
 		HttpOnly: true,
 		Path:     "/",
 		Name:     "csrf_token",
-		Secure:   false,
+		Secure:   appConfig.Production,
 		SameSite: http.SameSiteLaxMode,
 	})
 
 	return csrfHandler
 
+}
+
+func LoadSession(next http.Handler) http.Handler {
+	return appConfig.Session.LoadAndSave(next)
 }
