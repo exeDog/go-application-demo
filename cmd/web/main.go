@@ -25,7 +25,7 @@ func main() {
 	}
 
 	appConfig.TemplateCache = tc
-	appConfig.UseCache = true
+	appConfig.UseCache = false
 	render.NewTemplateCache(&appConfig)
 
 	repo := handlers.NewRepo(&appConfig)
