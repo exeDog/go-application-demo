@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"github.com/exedog/go-application-demo/pkg/config"
 	"github.com/exedog/go-application-demo/pkg/models"
 	"github.com/exedog/go-application-demo/pkg/render"
@@ -12,6 +13,11 @@ var Repo *Repository
 type (
 	Repository struct {
 		App *config.AppConfig
+	}
+
+	jsonResponse struct {
+		OK      bool   `json:"ok"`
+		Message string `json:"message"`
 	}
 )
 
@@ -58,4 +64,19 @@ func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		return
 	}
+}
+
+func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	resp := jsonResponse{
+		OK:      true,
+		Message: "Available!",
+	}
+
+	out, err := json.MarshalIndent(resp, "", "    ")
+	if err != nil {
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
 }
