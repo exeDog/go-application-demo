@@ -21,6 +21,9 @@ func routes(_ *config.AppConfig) http.Handler {
 	mux.Get("/majors-suite", http.HandlerFunc(handlers.Repo.Majors))
 	mux.Get("/search-availability", http.HandlerFunc(handlers.Repo.SearchAvailability))
 	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
+	mux.Get("/make-reservation", http.HandlerFunc(handlers.Repo.Reservation))
+
+	mux.Post("/search-availability", http.HandlerFunc(handlers.Repo.PostSearchAvailability))
 
 	fileService := http.FileServer(http.Dir("./static/"))
 

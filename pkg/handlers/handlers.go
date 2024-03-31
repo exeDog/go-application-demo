@@ -26,29 +26,36 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "home.page.html", &models.TemplateData{})
+	render.ShowTemplate(w, "home.page.html", &models.TemplateData{}, r)
 }
 
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "about.page.html", &models.TemplateData{})
+	render.ShowTemplate(w, "about.page.html", &models.TemplateData{}, r)
 }
 
 func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "generals.page.html", &models.TemplateData{})
+	render.ShowTemplate(w, "generals.page.html", &models.TemplateData{}, r)
 }
 
 func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "majors.page.html", &models.TemplateData{})
+	render.ShowTemplate(w, "majors.page.html", &models.TemplateData{}, r)
 }
 
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "make-reservation.page.html", &models.TemplateData{})
+	render.ShowTemplate(w, "make-reservation.page.html", &models.TemplateData{}, r)
 }
 
 func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "search-availability.page.html", &models.TemplateData{})
+	render.ShowTemplate(w, "search-availability.page.html", &models.TemplateData{}, r)
 }
 
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "contact.page.html", &models.TemplateData{})
+	render.ShowTemplate(w, "contact.page.html", &models.TemplateData{}, r)
+}
+
+func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Request) {
+	_, err := w.Write([]byte("Post search availability"))
+	if err != nil {
+		return
+	}
 }
