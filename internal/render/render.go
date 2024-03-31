@@ -3,8 +3,8 @@ package render
 import (
 	"bytes"
 	"fmt"
-	"github.com/exedog/go-application-demo/pkg/config"
-	"github.com/exedog/go-application-demo/pkg/models"
+	"github.com/exedog/go-application-demo/internal/config"
+	"github.com/exedog/go-application-demo/internal/models"
 	"github.com/justinas/nosurf"
 	"html/template"
 	"log"

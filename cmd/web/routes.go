@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/exedog/go-application-demo/pkg/config"
-	"github.com/exedog/go-application-demo/pkg/handlers"
+	"github.com/exedog/go-application-demo/internal/config"
+	"github.com/exedog/go-application-demo/internal/handlers"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"net/http"

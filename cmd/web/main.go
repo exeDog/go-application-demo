@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/exedog/go-application-demo/pkg/config"
-	"github.com/exedog/go-application-demo/pkg/handlers"
-	"github.com/exedog/go-application-demo/pkg/render"
-	"github.com/exedog/go-application-demo/pkg/session"
+	"github.com/exedog/go-application-demo/internal/config"
+	"github.com/exedog/go-application-demo/internal/handlers"
+	"github.com/exedog/go-application-demo/internal/render"
+	"github.com/exedog/go-application-demo/internal/session"
 	"log"
 	"net/http"
 )

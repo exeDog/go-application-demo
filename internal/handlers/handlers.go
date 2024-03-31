@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/exedog/go-application-demo/pkg/config"
-	"github.com/exedog/go-application-demo/pkg/models"
-	"github.com/exedog/go-application-demo/pkg/render"
+	"github.com/exedog/go-application-demo/internal/config"
+	"github.com/exedog/go-application-demo/internal/models"
+	"github.com/exedog/go-application-demo/internal/render"
 	"net/http"
 )
 

@@ -2,7 +2,7 @@ package session
 
 import (
 	"github.com/alexedwards/scs/v2"
-	"github.com/exedog/go-application-demo/pkg/config"
+	"github.com/exedog/go-application-demo/internal/config"
 	"net/http"
 	"time"
 )
