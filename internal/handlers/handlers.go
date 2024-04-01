@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/exedog/go-application-demo/internal/config"
+	"github.com/exedog/go-application-demo/internal/forms"
 	"github.com/exedog/go-application-demo/internal/models"
 	"github.com/exedog/go-application-demo/internal/render"
 	"net/http"
@@ -48,7 +50,9 @@ func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "make-reservation.page.html", &models.TemplateData{}, r)
+	render.ShowTemplate(w, "make-reservation.page.html", &models.TemplateData{
+		Form: forms.New(nil),
+	}, r)
 }
 
 func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
@@ -79,4 +83,37 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(out)
+}
+
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+	_, err := w.Write([]byte("Post reservation"))
+	if err != nil {
+		return
+	}
+
+	reservation := models.Reservation{
+		FirstName: r.Form.Get("first_name"),
+		LastName:  r.Form.Get("last_name"),
+		Email:     r.Form.Get("email"),
+		Phone:     r.Form.Get("phone"),
+	}
+
+	form := forms.New(r.PostForm)
+
+	form.Has("first_name", r)
+	fmt.Println(form.Valid())
+	fmt.Println(form.Errors)
+
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["reservation"] = reservation
+
+		println(form.Errors)
+		render.ShowTemplate(w, "make-reservation.page.html", &models.TemplateData{
+			Form: form,
+			Data: data,
+		}, r)
+
+		return
+	}
 }
