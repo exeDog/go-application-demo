@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"github.com/exedog/go-application-demo/internal/config"
 	"github.com/exedog/go-application-demo/internal/handlers"
+	"github.com/exedog/go-application-demo/internal/models"
 	"github.com/exedog/go-application-demo/internal/render"
 	"github.com/exedog/go-application-demo/internal/session"
 	"log"
@@ -15,6 +17,7 @@ const PORT = ":9000"
 var appConfig config.AppConfig
 
 func main() {
+	gob.Register(models.Reservation{})
 	appConfig.InProduction = false
 
 	session.CreateSession(&appConfig)
