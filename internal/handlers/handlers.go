@@ -7,87 +7,70 @@ import (
 	"github.com/exedog/go-application-demo/internal/forms"
 	"github.com/exedog/go-application-demo/internal/models"
 	"github.com/exedog/go-application-demo/internal/render"
+	"log"
 	"net/http"
 )
 
+// Repo the repository used by the handlers
 var Repo *Repository
 
-type (
-	Repository struct {
-		App *config.AppConfig
-	}
+// Repository is the repository type
+type Repository struct {
+	App *config.AppConfig
+}
 
-	jsonResponse struct {
-		OK      bool   `json:"ok"`
-		Message string `json:"message"`
-	}
-)
-
+// NewRepo creates a new repository
 func NewRepo(a *config.AppConfig) *Repository {
 	return &Repository{
 		App: a,
 	}
 }
 
+// NewHandlers sets the repository for the handlers
 func NewHandlers(r *Repository) {
 	Repo = r
 }
 
+// Home is the handler for the home page
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "home.page.html", &models.TemplateData{}, r)
+	remoteIP := r.RemoteAddr
+	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
+
+	render.RenderTemplate(w, r, "home.page.html", &models.TemplateData{})
 }
 
+// About is the handler for the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "about.page.html", &models.TemplateData{}, r)
+	// perform some logic
+	stringMap := make(map[string]string)
+	stringMap["test"] = "Hello, again"
+
+	remoteIP := m.App.Session.GetString(r.Context(), "remote_ip")
+	stringMap["remote_ip"] = remoteIP
+
+	// send data to the template
+	render.RenderTemplate(w, r, "about.page.html", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
 
-func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "generals.page.html", &models.TemplateData{}, r)
-}
-
-func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "majors.page.html", &models.TemplateData{}, r)
-}
-
+// Reservation renders the make a reservation page and displays form
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "make-reservation.page.html", &models.TemplateData{
+	var emptyReservation models.Reservation
+	data := make(map[string]interface{})
+	data["reservation"] = emptyReservation
+
+	render.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
 		Form: forms.New(nil),
-	}, r)
+		Data: data,
+	})
 }
 
-func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "search-availability.page.html", &models.TemplateData{}, r)
-}
-
-func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
-	render.ShowTemplate(w, "contact.page.html", &models.TemplateData{}, r)
-}
-
-func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Request) {
-	_, err := w.Write([]byte("Post search availability"))
-	if err != nil {
-		return
-	}
-}
-
-func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
-	resp := jsonResponse{
-		OK:      true,
-		Message: "Available!",
-	}
-
-	out, err := json.MarshalIndent(resp, "", "    ")
-	if err != nil {
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(out)
-}
-
+// PostReservation handles the posting of a reservation form
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
-	_, err := w.Write([]byte("Post reservation"))
+	err := r.ParseForm()
 	if err != nil {
+		log.Println(err)
 		return
 	}
 
@@ -100,20 +83,66 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 
-	form.Has("first_name", r)
-	fmt.Println(form.Valid())
-	fmt.Println(form.Errors)
+	form.Required("first_name", "last_name", "email")
+	form.MinLength("first_name", 3, r)
+	form.IsEmail("email")
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
-
-		println(form.Errors)
-		render.ShowTemplate(w, "make-reservation.page.html", &models.TemplateData{
+		render.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
 			Form: form,
 			Data: data,
-		}, r)
-
+		})
 		return
 	}
+}
+
+// Generals renders the room page
+func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "generals.page.html", &models.TemplateData{})
+}
+
+// Majors renders the room page
+func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "majors.page.html", &models.TemplateData{})
+}
+
+// Availability renders the search availability page
+func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "search-availability.page.html", &models.TemplateData{})
+}
+
+// PostAvailability handles post
+func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
+	start := r.Form.Get("start")
+	end := r.Form.Get("end")
+
+	w.Write([]byte(fmt.Sprintf("start date is %s and end is %s", start, end)))
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+// AvailabilityJSON handles request for availability and sends JSON response
+func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	resp := jsonResponse{
+		OK:      true,
+		Message: "Available!",
+	}
+
+	out, err := json.MarshalIndent(resp, "", "     ")
+	if err != nil {
+		log.Println(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
+}
+
+// Contact renders the contact page
+func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "contact.page.html", &models.TemplateData{})
 }
