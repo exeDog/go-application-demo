@@ -12,7 +12,7 @@ func CreateSession(config *config.AppConfig) {
 	session.Lifetime = 24 * time.Hour
 	session.Cookie.Persist = true
 	session.Cookie.SameSite = http.SameSiteLaxMode
-	session.Cookie.Secure = config.Production
+	session.Cookie.Secure = config.InProduction
 
 	config.Session = session
 }

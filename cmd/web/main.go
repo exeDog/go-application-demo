@@ -15,7 +15,7 @@ const PORT = ":9000"
 var appConfig config.AppConfig
 
 func main() {
-	appConfig.Production = false
+	appConfig.InProduction = false
 
 	session.CreateSession(&appConfig)
 
@@ -26,7 +26,7 @@ func main() {
 
 	appConfig.TemplateCache = tc
 	appConfig.UseCache = false
-	render.NewTemplateCache(&appConfig)
+	render.NewTemplates(&appConfig)
 
 	repo := handlers.NewRepo(&appConfig)
 	handlers.NewHandlers(repo)

@@ -8,29 +8,29 @@ import (
 	"net/http"
 )
 
-func routes(_ *config.AppConfig) http.Handler {
+func routes(app *config.AppConfig) http.Handler {
 	mux := chi.NewRouter()
 
 	mux.Use(middleware.Recoverer)
 	mux.Use(Nosurf)
 	mux.Use(LoadSession)
 
-	mux.Get("/", http.HandlerFunc(handlers.Repo.Home))
-	mux.Get("/about", http.HandlerFunc(handlers.Repo.About))
-	mux.Get("/generals-quarters", http.HandlerFunc(handlers.Repo.Generals))
-	mux.Get("/majors-suite", http.HandlerFunc(handlers.Repo.Majors))
-	mux.Get("/search-availability", http.HandlerFunc(handlers.Repo.SearchAvailability))
-	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
-	mux.Get("/make-reservation", http.HandlerFunc(handlers.Repo.Reservation))
+	mux.Get("/", handlers.Repo.Home)
+	mux.Get("/about", handlers.Repo.About)
+	mux.Get("/generals-quarters", handlers.Repo.Generals)
+	mux.Get("/majors-suite", handlers.Repo.Majors)
 
-	mux.Post("/search-availability", http.HandlerFunc(handlers.Repo.PostSearchAvailability))
+	mux.Get("/search-availability", handlers.Repo.Availability)
+	mux.Post("/search-availability", handlers.Repo.PostAvailability)
+	mux.Post("/search-availability-json", handlers.Repo.AvailabilityJSON)
 
-	mux.Post("/search-availability-json", http.HandlerFunc(handlers.Repo.AvailabilityJSON))
-	mux.Post("/make-reservation", http.HandlerFunc(handlers.Repo.PostReservation))
+	mux.Get("/contact", handlers.Repo.Contact)
 
-	fileService := http.FileServer(http.Dir("./static/"))
+	mux.Get("/make-reservation", handlers.Repo.Reservation)
+	mux.Post("/make-reservation", handlers.Repo.PostReservation)
 
-	mux.Handle("/static/*", http.StripPrefix("/static", fileService))
+	fileServer := http.FileServer(http.Dir("./static/"))
+	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	return mux
 }

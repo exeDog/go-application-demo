@@ -1,19 +1,17 @@
 package forms
 
-type (
-	errors map[string][]string
-)
+type errors map[string][]string
 
-func (e errors) Add(field string, message string) {
+// Add adds an error message for a given form field
+func (e errors) Add(field, message string) {
 	e[field] = append(e[field], message)
 }
 
-func (e errors) Get(field string) []string {
+// Get returns first error message for a field
+func (e errors) Get(field string) string {
 	es := e[field]
-
 	if len(es) == 0 {
-		return nil
-	} else {
-		return es
+		return ""
 	}
+	return es[0]
 }

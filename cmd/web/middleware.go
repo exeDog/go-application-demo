@@ -12,7 +12,7 @@ func Nosurf(next http.Handler) http.Handler {
 		HttpOnly: true,
 		Path:     "/",
 		Name:     "csrf_token",
-		Secure:   appConfig.Production,
+		Secure:   appConfig.InProduction,
 		SameSite: http.SameSiteLaxMode,
 	})
 
