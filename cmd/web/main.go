@@ -12,7 +12,7 @@ import (
 	"net/http"
 )
 
-const PORT = ":9000"
+const PORT = "localhost:9000"
 
 var appConfig config.AppConfig
 
