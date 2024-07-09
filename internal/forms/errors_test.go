@@ -1,13 +1,20 @@
 package forms
 
-import "testing"
+import (
+	"github.com/jaswdr/faker"
+	"testing"
+)
 
 func TestErrors_Add(t *testing.T) {
 	e := errors{}
 
-	e.Add("somefield", "some message")
+	fakerMock := faker.New()
 
-	if e.Get("somefield") != "some message" {
+	fieldName := fakerMock.Car().Maker()
+
+	e.Add(fieldName, "some message")
+
+	if e.Get(fieldName) != "some message" {
 		t.Error("error message not found")
 	}
 }
