@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"github.com/exedog/go-application-demo/internal/config"
 	"github.com/exedog/go-application-demo/internal/handlers"
+	"github.com/exedog/go-application-demo/internal/helpers"
 	"github.com/exedog/go-application-demo/internal/models"
 	"github.com/exedog/go-application-demo/internal/render"
 	"github.com/exedog/go-application-demo/internal/session"
 	"log"
 	"net/http"
+	"os"
 )
 
 const PORT = "localhost:9009"
@@ -19,6 +21,8 @@ var appConfig config.AppConfig
 func main() {
 	gob.Register(models.Reservation{})
 	appConfig.InProduction = false
+	appConfig.InfoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	appConfig.ErrorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	session.CreateSession(&appConfig)
 
@@ -33,6 +37,7 @@ func main() {
 
 	repo := handlers.NewRepo(&appConfig)
 	handlers.NewHandlers(repo)
+	helpers.NewHelpers(&appConfig)
 
 	fmt.Println("Server running on port 9000")
 

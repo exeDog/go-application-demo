@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/exedog/go-application-demo/internal/config"
 	"github.com/exedog/go-application-demo/internal/forms"
+	"github.com/exedog/go-application-demo/internal/helpers"
 	"github.com/exedog/go-application-demo/internal/models"
 	"github.com/exedog/go-application-demo/internal/render"
-	"log"
 	"net/http"
 )
 
@@ -70,7 +70,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -138,7 +138,8 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 	out, err := json.MarshalIndent(resp, "", "     ")
 	if err != nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -154,7 +155,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 
 	if !ok {
-		log.Println("Cannot get item from session")
+		m.App.ErrorLog.Println("Cannot get item from session")
 		m.App.Session.Put(r.Context(), "error", "Cannot get reservation")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return

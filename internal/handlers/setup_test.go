@@ -13,6 +13,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 )
 
@@ -21,7 +22,10 @@ var appConfig config.AppConfig
 func testRoutes() http.Handler {
 
 	gob.Register(models.Reservation{})
+
 	appConfig.InProduction = false
+	appConfig.InfoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	appConfig.ErrorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	session.CreateSession(&appConfig)
 
