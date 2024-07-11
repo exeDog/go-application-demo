@@ -25,4 +25,13 @@ func TestErrors_Get(t *testing.T) {
 	if e.Get("somefield") != "" {
 		t.Error("error message found")
 	}
+
+	fakerMock := faker.New()
+	mockError := fakerMock.Car().Model()
+
+	e.Add("somefield", mockError)
+
+	if e.Get("somefield") != mockError {
+		t.Error("error message not found")
+	}
 }
